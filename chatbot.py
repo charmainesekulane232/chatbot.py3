@@ -1,71 +1,76 @@
-# Advanced Fashion Chatbot by Mahlatse
-# Demonstrates: conditionals, loops, data structures, randomization, and personalization
 
-import time
+import requests
 import random
+import time
 
-# Data structure: dictionary with lists
-outfit_suggestions = {
-    "casual": ["jeans and a white t-shirt", "a floral summer dress", "denim jacket with leggings"],
-    "formal": ["a black blazer with trousers", "a classy dress and heels", "a suit with a silk blouse"],
-    "street": ["oversized hoodie and sneakers", "baggy jeans with crop top", "leather jacket and boots"]
-}
+class PinterestFashionAPI:
+    """Simulates or connects to Pinterest V5 API for trend retrieval."""
+    def __init__(self, access_token=None):
+        self.base_url = "https://api.pinterest.com/v5"
+        self.token = access_token
 
-mood_suggestions = {
-    "happy": ["bright colors like yellow or pink", "a playful jumpsuit", "patterned skirts or dresses"],
-    "sad": ["comfortable sweatpants and a hoodie", "soft pastel tones", "cozy oversized sweaters"],
-    "confident": ["a bold red outfit", "heels with a fitted outfit", "statement jewelry"],
-    "relaxed": ["loose linen pants", "a soft t-shirt dress", "slides or flats"]
-}
+    def get_trending_pins(self, query):
+        """
+        Fetches latest pins based on fashion keywords.
+        In a live environment, this would use: requests.get(f"{self.base_url}/search/pins", headers=headers)
+        """
+        # Simulated API Response Data
+        trends = {
+            "minimalist": ["Monochrome Linen Sets", "Silk Slip Dresses", "Neutral Capsule Wardrobes"],
+            "streetwear": ["Vintage Graphic Tees", "Cargo Trousers", "Platform Tech Sneakers"],
+            "formal": ["Velvet Tailored Blazers", "Satin Evening Gowns", "Structured Tuxedo Vests"]
+        }
+        return trends.get(query.lower(), ["Modern Classic Essentials"])
 
-# Function for pink background (works best in VS Code/Terminal)
-def pink_background():
-    print("\033[45m" + " " * 60)
-    print(" " * 17 + "💖 Welcome to FashionBot 2.0 💖")
-    print(" " * 60 + "\033[0m")
+class FashionConsultant:
+    def __init__(self):
+        self.api = PinterestFashionAPI()
+        self.user_data = {}
 
-# Start Chatbot
-pink_background()
-print("Hi there, gorgeous! I’m your fashion assistant 💅")
+    def authenticate_user(self):
+        print("=" * 50)
+        print("FASHIONISTABOT: GLOBAL STYLING TERMINAL")
+        print("=" * 50)
+        name = input("Consultant identifying user. Please enter your name: ")
+        self.user_data['name'] = name
+        print(f"\nWelcome, {name}. System initialized.\n")
 
-# Ask for user's name
-user_name = input("\nWhat’s your name? ").title()
-print(f"Lovely to meet you, {user_name}! Let’s find your perfect outfit ✨")
+    def provide_recommendation(self):
+        print("Select a Style Pillar: Minimalist, Streetwear, Formal")
+        style = input("Input Preference: ").strip().lower()
 
-# Main chatbot loop
-while True:
-    time.sleep(1)
-    user_input = input("\nWhat type of occasion are you dressing for? (casual/formal/street or 'exit'): ").lower()
+        # Fetching data 'live' from our API class
+        print(f"\nAccessing global trends for {style}...")
+        time.sleep(1)
+        recommendations = self.api.get_trending_pins(style)
 
-    # Control statement: exit
-    if user_input == "exit":
-        print(f"\nGoodbye, {user_name}! Stay stylish and confident 💖")
-        break
+        print(f"\nCURRENT MARKET TRENDS FOR {self.user_data['name'].upper()}:")
+        for idx, item in enumerate(recommendations, 1):
+            print(f"{idx}. {item}")
 
-    # Respond with outfit ideas
-    elif user_input in outfit_suggestions:
-        print(f"\nHere are some {user_input} outfit ideas for you, {user_name}:")
-        for outfit in outfit_suggestions[user_input]:
-            print(f" 👗 - {outfit}")
+        self.suggest_accessories(style)
 
-        # Ask about mood for personalized touch
-        mood = input("\nHow are you feeling today? (happy/sad/confident/relaxed): ").lower()
+    def suggest_accessories(self, style):
+        # Professional accessory logic based on style pillar
+        accessories = {
+            "minimalist": "Matte Silver Watch",
+            "streetwear": "Industrial Chain Link Necklace",
+            "formal": "Mother-of-Pearl Cufflinks or Classic Tennis Bracelet"
+        }
+        suggestion = accessories.get(style, "Timeless Leather Belt")
+        print(f"\nPROPOSED ACCESSORY: {suggestion}")
+        print("-" * 50)
 
-        if mood in mood_suggestions:
-            print(f"\nSince you’re feeling {mood}, you might love these looks too:")
-            for idea in mood_suggestions[mood]:
-                print(f" 💕 - {idea}")
-        else:
-            print("Mood not recognized, but you’ll look fabulous either way! 💫")
+    def run(self):
+        self.authenticate_user()
+        active = True
+        while active:
+            self.provide_recommendation()
+            cont = input("Would you like to analyze another style? (yes/no): ").lower()
+            if cont != 'yes':
+                print(f"\nConsultation concluded. Stay distinguished, {self.user_data['name']}.")
+                active = False
 
-        # Ask about accessories
-        accessory = input("\nWould you like accessory ideas? (yes/no): ").lower()
-        if accessory == "yes":
-            accessories = ["statement earrings", "a pearl necklace", "a stylish handbag", "cool sunglasses"]
-            suggestion = random.choice(accessories)
-            print(f"\nTry pairing your outfit with {suggestion} 😍")
-        else:
-            print("Keeping it minimal? Classy choice 💎")
-
-    else:
-        print("Hmm, I don’t have suggestions for that yet. Try 'casual', 'formal', or 'street'.")
+if __name__ == "__main__":
+    bot = FashionConsultant()
+    bot.run()
