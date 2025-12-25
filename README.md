@@ -52,4 +52,4 @@ python fashion_bot.py
 
 
 
-**This is now a complete, job-ready project! Would you like me to help you write a professional LinkedIn post to showcase this to recruiters?**
+
